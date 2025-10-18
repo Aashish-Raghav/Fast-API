@@ -1,0 +1,121 @@
+# =======================================
+# Python
+# =======================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.venv*/
+venv*/
+env*/
+ENV*/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Byte-compiled / optimized files
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.db
+
+# =======================================
+# FastAPI / Uvicorn / Gunicorn
+# =======================================
+# Uvicorn / Gunicorn log files
+*.log
+logs/
+log/
+*.pid
+
+# Cache and build artifacts
+*.egg-info/
+dist/
+build/
+.eggs/
+.cache/
+.mypy_cache/
+.pytest_cache/
+__pypackages__/
+
+# =======================================
+# Databases and Storage
+# =======================================
+# SQLite files
+*.db
+*.sqlite3
+# PostgreSQL dumps
+*.sql
+*.dump
+
+# =======================================
+# Environment / Configuration Files
+# =======================================
+# Local environment variables
+.env
+.env.*
+!env.example
+
+# Configuration and secret keys
+config.json
+secrets.json
+activate.txt
+
+# =======================================
+# Testing
+# =======================================
+# Coverage reports
+.coverage
+htmlcov/
+cov.xml
+coverage.xml
+
+# Pytest cache
+.pytest_cache/
+
+# =======================================
+# OS / Misc
+# =======================================
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.swp
+*.lock
+
+# =======================================
+# Docker / Containers
+# =======================================
+# Docker files
+Dockerfile.*
+docker-compose*.yml
+# Docker artifacts
+*.pid
+*.tar
+.dockerignore
+
+# =======================================
+# Jupyter / Notebooks
+# =======================================
+.ipynb_checkpoints
+*.ipynb
+
+# =======================================
+# Additional project folders
+# =======================================
+# Ignore generated files or uploads
+uploads/
+media/
+staticfiles/
