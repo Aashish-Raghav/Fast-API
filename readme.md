@@ -29,6 +29,7 @@ This section lists each example file in this directory. Each entry explains the 
 1. [Basics](#1-Basics)  
 2. [Parameters](#2-Parameters)  
 3. [Models](#3-Models)
+4. [Error Handling](#4-Error-Handling)
 
 ---
 
@@ -74,7 +75,6 @@ How to run (Windows PowerShell or CMD):
 uvicorn parameters:app --reload
 ```
 
-
 ## 3. Models
 
 **Purpose:**
@@ -97,6 +97,27 @@ How to run (Windows PowerShell or CMD):
 uvicorn models:app --reload
 ```
 
+
+## 4. Error Handling
+
+**Purpose:**
+
+- Demonstrates patterns for consistent, centralized error handling in FastAPI applications using custom exceptions and exception handlers, and compares that approach with built-in HTTPException usage.
+
+**What is covered:**
+
+- Defining a custom application exception base class and specific exception types.
+- Registering exception handlers to return consistent JSON error responses (status code, error type, message, request path).
+- Using built-in HTTPException for simpler, inline error responses.
+- Trade-offs between centralized custom handlers (standardized format, richer context, easier monitoring/logging) and HTTPException (simplicity, automatic OpenAPI responses).
+- Best-practice considerations for production: consistent error schemas, integration with logging/monitoring, and choosing the right approach depending on project complexity.
+
+*See: [`error_handling.py`](error_handling.py)*
+
+How to run (Windows PowerShell or CMD):
+```bash
+uvicorn error_handling:app --reload
+```
 
 ## Resources
 - Official docs: https://fastapi.tiangolo.com  
