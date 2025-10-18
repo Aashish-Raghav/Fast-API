@@ -21,6 +21,38 @@ Run on Windows (PowerShell or CMD):
 pip install fastapi "uvicorn[standard]"
 ```
 
+
+## Index
+
+This section lists each example file in this directory. Each entry explains the topic, what is covered, and how to run the example.
+
+1. [Basics](#1-Basics)
+
+---
+
+## 1. Basics
+
+**Purpose:**
+
+- A minimal, focused example to demonstrate FastAPI fundamentals and how function signatures map to HTTP behavior and automatic documentation.
+
+**What we've covered in code:**
+
+- Basic HTTP methods: GET, POST, PUT, DELETE.
+- Path parameters with type validation (e.g., integer IDs).
+- Query parameters with default values and validation.
+- How FastAPI uses Python type hints to parse and validate incoming requests.
+- How endpoints appear in the automatically generated API documentation (Swagger UI and ReDoc).
+
+*See: [`basic.py`](basic.py)*
+
+
+Run on Windows (PowerShell or CMD):
+```bash
+uvicorn basic:app --reload
+```
+
+
 ## Resources
 - Official docs: https://fastapi.tiangolo.com  
 - Pydantic: https://pydantic-docs.helpmanual.io
