@@ -26,7 +26,9 @@ pip install fastapi "uvicorn[standard]"
 
 This section lists each example file in this directory. Each entry explains the topic, what is covered, and how to run the example.
 
-1. [Basics](#1-Basics)
+1. [Basics](#1-Basics)  
+2. [Parameters](#2-Parameters)  
+3. [Models](#3-Models)
 
 ---
 
@@ -46,10 +48,53 @@ This section lists each example file in this directory. Each entry explains the 
 
 *See: [`basic.py`](basic.py)*
 
-
 Run on Windows (PowerShell or CMD):
 ```bash
 uvicorn basic:app --reload
+```
+
+## 2. Parameters
+
+**Purpose:**
+
+- Demonstrates how to define request bodies using Pydantic models and how to combine query, path, and body parameters in endpoint definitions.
+
+**What is covered:**
+
+- Defining Pydantic models for request bodies.
+- Body parameter handling and automatic validation.
+- Combining path parameters, request body models, and query parameters in one endpoint.
+- Default values and optional fields in endpoint signatures.
+- How parameter definitions appear in auto-generated docs and are validated at runtime.
+
+*See: [`parameters.py`](parameters.py)*
+
+How to run (Windows PowerShell or CMD):
+```bash
+uvicorn parameters:app --reload
+```
+
+
+## 3. Models
+
+**Purpose:**
+
+- Shows advanced Pydantic model usage: nested models, optional fields, field validation constraints, default values, and response models coupled with status codes.
+
+**What is covered:**
+
+- Nested models to represent related objects (e.g., Address inside User).
+- Optional fields with defaults and how they are documented.
+- Field-level validation using Pydantic's Field (constraints like min/max length, greater-than, etc.).
+- Using response models to control output shape and validation.
+- Setting custom HTTP status codes for endpoints.
+- How these model features influence request/response validation and the API docs.
+
+*See: [`models.py`](models.py)*
+
+How to run (Windows PowerShell or CMD):
+```bash
+uvicorn models:app --reload
 ```
 
 
