@@ -30,6 +30,8 @@ This section lists each example file in this directory. Each entry explains the 
 2. [Parameters](#2-Parameters)  
 3. [Models](#3-Models)
 4. [Error Handling](#4-Error-Handling)
+5. [Example App](#5-Example-App)
+
 
 ---
 
@@ -117,6 +119,29 @@ uvicorn models:app --reload
 How to run (Windows PowerShell or CMD):
 ```bash
 uvicorn error_handling:app --reload
+```
+
+
+## 5. Example App
+
+**Purpose:**
+
+- A compact, practical example demonstrating a small CRUD application built with FastAPI and Pydantic.
+
+**What is covered:**
+
+- Full CRUD endpoints for an Item resource (create, read single, read list, update, delete).
+- Request validation using Pydantic models (request and response models).
+- Use of HTTP status codes (201 Created, 204 No Content, 404 Not Found).
+- In-memory data store pattern for example/testing purposes.
+- Pagination-like parameters (skip and limit) for list endpoints.
+- Using response_model to shape and validate outgoing responses.
+
+See: [`example.py`](example.py)
+
+How to run (Windows PowerShell or CMD):
+```bash
+uvicorn example:app --reload
 ```
 
 ## Resources
