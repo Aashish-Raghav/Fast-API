@@ -31,6 +31,7 @@ This section lists each example file in this directory. Each entry explains the 
 3. [Models](#3-Models)
 4. [Error Handling](#4-Error-Handling)
 5. [Example App](#5-Example-App)
+6. [SQLAlchemy](#6-SQLAlchemy-Async-Example)
 
 
 ---
@@ -143,6 +144,46 @@ How to run (Windows PowerShell or CMD):
 ```bash
 uvicorn example:app --reload
 ```
+
+
+## 6. SQLAlchemy Async Example
+
+Purpose:
+- Demonstrates integrating FastAPI with asynchronous SQLAlchemy usage and an organized project layout.
+
+What is covered (file roles):
+- `SQLalchemy/.env` — Holds DATABASE_URL (example uses sqlite+aiosqlite).  
+- `SQLalchemy/app/main.py` — FastAPI app, startup event to create tables, router inclusion.  
+- `SQLalchemy/app/database.py` — Async engine setup, async_sessionmaker, declarative Base, get_db dependency, reads .env.  
+- `SQLalchemy/app/models.py` — ORM model definitions (SQLAlchemy).  
+- `SQLalchemy/app/schemas.py` — Pydantic schemas for request/response with orm_mode.  
+- `SQLalchemy/app/crud.py` — Async CRUD helpers using AsyncSession.  
+- `SQLalchemy/app/routers/users.py` — APIRouter example showing dependency injection and endpoint signatures.  
+- `SQLalchemy/app/version.py` — simple helper printing SQLAlchemy version (diagnostic).  
+- `.vscode/launch.json` — example VS Code debug configuration that points to this project and uses the .env file.
+
+Key concepts demonstrated:
+- Async SQLAlchemy engine and sessions.
+- Dependency injection for DB sessions.
+- Separation of models / schemas / crud / routers.
+- Creating DB tables at application startup.
+- Using environment variables for configuration.
+
+How to run:
+- Install required packages
+```bash
+pip install fastapi uvicorn sqlalchemy sqlalchemy[aysncio] aiosqlite python-dotenv email-validator psycopg2-binary
+```
+- Start the app
+```bash
+uvicorn SQLalchemy.app.main:app --reload
+```
+- Alternatively use the provided VS Code launch configuration to run/debug (ensure python path and virtual env are correct).
+
+Notes:
+- The example uses an in-memory / local sqlite URL by default via .env; swap to a production DB for real use.
+- database.py prints environment diagnostics to help troubleshoot .env loading.
+
 
 ## Resources
 - Official docs: https://fastapi.tiangolo.com  
