@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas import PostCreate, PostResponse, PostUpdate
 from app.database import get_db
@@ -6,7 +6,7 @@ from app.crud import create_post, get_all_posts, get_post_by_id, get_post_by_use
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
-@router.post("/", response_model=PostResponse)
+@router.post("/", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
 async def create_new_post(post: PostCreate, owner_id : int ,db: AsyncSession = Depends(get_db)):
     try:
         return await create_post(db, post, owner_id)
