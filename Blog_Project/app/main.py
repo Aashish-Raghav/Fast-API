@@ -8,6 +8,7 @@ app = FastAPI(title="Blog API")
 app.include_router(users.router)
 app.include_router(posts.router)
 
+
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
