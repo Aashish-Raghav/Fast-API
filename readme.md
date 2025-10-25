@@ -33,7 +33,7 @@ This section lists each example file in this directory. Each entry explains the 
 5. [Example App](#5-Example-App)
 6. [SQLAlchemy](#6-SQLAlchemy-Async-Example)
 7. [Blog API Project](#7-blog_project--fastapi--async-sqlalchemy-example)
-
+8. [JWT with FASTApi](#8-jwt-basics-jwtpy)
 
 ---
 
@@ -360,6 +360,40 @@ ReDoc: http://127.0.0.1:8000/redoc
 - Pagination, filtering, and full-text search for posts.
 - Migrations with Alembic for production schema management.
 - Tests for endpoints and DB operations; CI/CD and Docker deployment.
+
+
+## 8. JWT Basics (jwt.py)
+
+### Purpose
+- Demonstrates a minimal JWT-based authentication flow with FastAPI using OAuth2 password flow (token endpoint) and a protected route that requires a Bearer token.
+
+### What is covered
+- Generating JWT access tokens with an expiry.
+- Exposing a login endpoint that accepts OAuth2 form data and returns a Bearer token.
+- Protecting routes using FastAPI's dependency on OAuth2PasswordBearer which reads the Authorization header.
+- Validating and decoding JWTs on protected endpoints and returning an appropriate HTTP error on invalid/expired tokens.
+- Key concepts: SECRET_KEY, signing ALGORITHM (HS256), token expiry, token creation/verification, and OAuth2PasswordBearer token dependency.
+
+### How JWT with FastAPI works (short)
+- Client posts credentials to a token endpoint (login). The server validates credentials and issues a signed JWT (access token) containing a subject (sub) and expiration (exp).
+- Client includes the token in the Authorization header: "Authorization: Bearer <token>" when calling protected endpoints.
+- FastAPI dependency (OAuth2PasswordBearer) extracts the token and endpoint code (or a reusable dependency) decodes and verifies it (signature, expiry). If valid, request proceeds; otherwise return 401/403.
+
+## Run (development)
+Install
+```bash
+pip install fastapi "uvicorn[standard]" python-jose
+```
+
+How to run
+```bash
+uvicorn JWT_Basics.jwt:app --reload
+```
+
+### How to test (manual)
+- POST credentials to /login (OAuth2 form fields: username, password) to receive an access_token.
+- Call protected endpoints with header: Authorization: Bearer <access_token>.
+- On invalid/expired tokens the server responds with the appropriate HTTP error.
 
 
 ## Resources
