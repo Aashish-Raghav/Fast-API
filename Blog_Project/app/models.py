@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 import datetime
 
@@ -10,7 +10,11 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, nullable=False, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
+    hashed_password = Column(String, nullable=False)
     created_at = Column(
+        DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+    last_login = Column(
         DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
 

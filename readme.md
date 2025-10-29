@@ -32,7 +32,7 @@ This section lists each example file in this directory. Each entry explains the 
 4. [Error Handling](#4-Error-Handling)
 5. [Example App](#5-Example-App)
 6. [SQLAlchemy](#6-SQLAlchemy-Async-Example)
-7. [Blog API Project](#7-blog_project--fastapi--async-sqlalchemy-example)
+7. [Blog API Project](#7-blog_project--abstract-overview)
 8. [JWT with FASTApi](#8-jwt-basics-jwtpy)
 
 ---
@@ -275,91 +275,33 @@ Notes:
 - database.py prints environment diagnostics to help troubleshoot .env loading.
 
 
-## 7. Blog_Project — FastAPI + Async SQLAlchemy Example
+## 7. Blog_Project — Abstract overview
 
 ### Purpose
-- Small blog API demonstrating a practical, structured FastAPI project using asynchronous SQLAlchemy (aiosqlite for local testing).
-- Focuses on clear separation: routers, CRUD layer, ORM models, Pydantic schemas, and DB configuration.
+- A small production-oriented example demonstrating how to build a JWT-protected blog API with FastAPI and async SQLAlchemy.
+- Focuses on structure and best-practice patterns: clear separation of routers, CRUD layer, ORM models, Pydantic schemas, async DB config, and auth.
 
-### Environment variables
-Create a .env file inside the Blog_Project root (or app folder) and set the DB connection:
-  
-  - Local SQLite (development):
-  ```bash
-    DATABASE_URL=sqlite+aiosqlite:///./blog.db
-  ```
-  - PostgreSQL (production):
-  ```bash
-    DATABASE_URL=postgresql+asyncpg://user:password@localhost/dbname
-  ```
+### Tech stack (high level)
+- FastAPI (HTTP + OpenAPI)
+- SQLAlchemy (async) with aiosqlite for local testing (replaceable with asyncpg/Postgres)
+- Pydantic / pydantic-settings for configuration and request/response validation
+- JWT (python-jose) for authentication
+- passlib / bcrypt for password hashing
+- Uvicorn as ASGI server
 
-### Project structure (concise)
-```bash
-- Blog_Project/
-  - app/
-    - routers/        — API route modules (users.py, posts.py)
-    - database.py     — async engine, sessionmaker, Base, get_db dependency
-    - crud.py         — async DB operations (create/read/update/delete)
-    - models.py       — SQLAlchemy ORM models (User, Post) and relationships
-    - schemas.py      — Pydantic request/response models (orm_mode=True)
-    - main.py         — FastAPI app entrypoint, registers routers and runs startup tasks
-  - .env              — environment variables
-```
+### Where to find full details
+Detailed, file-level explanations, run instructions, env examples and development notes are maintained in the project [readme.md](Blog_Project/readme.md)
 
-### API Endpoints (summary)
+### Quick run (development)
+See the project README for prerequisites and full steps. 
 
+### Why this project is included
+To show a realistic small application combining:
+  - async DB access and session management,
+  - JWT authentication with access/refresh tokens,
+  - a modular code layout suitable to evolve into production (migrations, CI, containerization).
 
-#### Users
-``` bash
-- POST /users        — Create a new user
-- GET  /users        — Get all users
-- GET  /users/{id}   — Get user by ID
-```
-#### Posts
-``` bash
-- POST   /posts         — Create a new post 
-                          (owner_id provided separately, auth in future)
-- GET    /posts         — Get all posts
-- GET    /posts/{id}    — Get a post by ID
-- PATCH  /posts/{id}    — Update a post
-- DELETE /posts/{id}    — Delete a post
-```
-
-## How it works (request flow, high level)
-- App startup (main.py) runs table creation if needed (development convenience).
-- database.py creates async engine and sessionmaker; models register with Base.
-- Incoming request hits a router endpoint. FastAPI validates input against Pydantic schemas.
-- Router injects an AsyncSession from get_db and delegates DB work to functions in crud.py.
-- crud.py performs async queries/transactions, commits, and returns ORM objects.
-- Router returns responses using Pydantic response models; orm_mode converts ORM objects to JSON shape.
-
-## Development & debugging
-- Use the .env file and set DATABASE_URL for local testing.
-- Enable echo=True on create_async_engine in database.py to log SQL statements during development.
-- Use the included VS Code launch.json (if present) to run and debug Uvicorn with environment variables loaded.
-
-## Run (development)
-Ensure dependencies are installed
-```bash 
-pip install requirement.txt
-```
-Start the app from the workspace root:
-```bash
-cd Blog_project/
-uvicorn app.main:app --reload
-```
-Open API docs:
-``` bash
-Swagger UI: http://127.0.0.1:8000/docs
-ReDoc: http://127.0.0.1:8000/redoc
-``` 
-
-## Future enhancements (examples)
-- JWT authentication for user login and secure post creation (set owner from token).
-- Role-based access control (admin, author, reader).
-- Pagination, filtering, and full-text search for posts.
-- Migrations with Alembic for production schema management.
-- Tests for endpoints and DB operations; CI/CD and Docker deployment.
+For implementation details (endpoints, schemas, tokens, db layout, and next steps) open [readme](Blog_Project/readme.md) 
 
 
 ## 8. JWT Basics (jwt.py)

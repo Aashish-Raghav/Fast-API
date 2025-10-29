@@ -9,16 +9,20 @@ from app.crud import (
     get_post_by_user,
     update_post,
 )
+from app.models import User
+from app.auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 
 @router.post("/", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
 async def create_new_post(
-    post: PostCreate, owner_id: int, db: AsyncSession = Depends(get_db)
+    post: PostCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
-        return await create_post(db, post, owner_id)
+        return await create_post(db, post, current_user.id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -46,9 +50,12 @@ async def read_post_by_user(user_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.patch("/{post_id}", response_model=PostResponse)
 async def patch_post(
-    post_id: int, post_update: PostUpdate, db: AsyncSession = Depends(get_db)
+    post_id: int,
+    post_update: PostUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    post = await update_post(db, post_id, post_update)
+    post = await update_post(db, current_user.id, post_id, post_update)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post

@@ -1,18 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas import UserResponse, UserCreate
+
+from app.auth.dependencies import get_current_user
+from app.schemas import UserResponse
 from app.database import get_db
-from app.crud import create_user, get_all_user, get_user_by_id
+from app.crud import get_all_user, get_user_by_id
+from app.models import User
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(
+    prefix="/users", tags=["users"], dependencies=[Depends(get_current_user)]
+)
 
 
-@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_new_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
-    try:
-        return await create_user(db, user)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+@router.get("/me", response_model=UserResponse)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @router.get("/", response_model=list[UserResponse])

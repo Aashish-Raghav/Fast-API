@@ -1,8 +1,13 @@
 fastapi
-uvicorn
-sqlalchemy
-sqlalchemy[aysncio]
+uvicorn[standard]
+sqlalchemy[asyncio]
 aiosqlite
-python - dotenv
-email - validator
-psycopg2 - binary
+python-dotenv
+email-validator
+python-jose[cryptography]
+python-multipart
+bcrypt==4.0.1
+passlib[bcrypt]
+
+psycopg2-binary
+asyncpg

@@ -17,7 +17,7 @@ class PostResponse(BaseModel):
     updated_at: datetime.datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PostUpdate(BaseModel):
@@ -26,16 +26,42 @@ class PostUpdate(BaseModel):
 
 
 # Schemas for user
-class UserCreate(BaseModel):
-    username: str = Field(..., min_length=1, max_length=100)
+class UserBase(BaseModel):
+    username: str = Field(..., min_length=1, max_length=50)
     email: EmailStr
 
 
-class UserResponse(BaseModel):
+class UserCreate(UserBase):
+    password: str = Field(..., min_length=4, max_length=100)
+
+
+class UserResponse(UserBase):
     id: int
-    username: str = Field(..., min_length=1, max_length=100)
-    email: EmailStr
-    # posts : list[PostResponse] = []
+    created_at: datetime.datetime
+    last_login: Optional[datetime.datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+# Token Schemas
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+    user_id: Optional[int] = None
+
+
+# Login Schemas
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+# Refresh Schemas
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str

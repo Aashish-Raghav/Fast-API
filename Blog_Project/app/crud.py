@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import selectinload
-from . import models
-from . import schemas
+from sqlalchemy import select, and_
 
+from app.logger import logger
+from app.auth.utils import get_password_hash
+from app import models
+from app import schemas
 
 # --------------- User CRUD -----------------
 
@@ -15,10 +15,14 @@ async def create_user(db: AsyncSession, user: schemas.UserCreate) -> models.User
     )
     existing_user = result.scalars().first()
     if existing_user:
+        logger.warning(f"Registration attempt for existing user : {existing_user}")
         raise ValueError("User Already Exists")
 
-    new_user = models.User(**user.model_dump())
-    print(f" New User : {new_user}")
+    hashed_password = await get_password_hash(user.password)
+    new_user = models.User(
+        username=user.username, email=user.email, hashed_password=hashed_password
+    )
+
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
@@ -27,6 +31,13 @@ async def create_user(db: AsyncSession, user: schemas.UserCreate) -> models.User
 
 async def get_user_by_id(db: AsyncSession, user_id: int) -> models.User | None:
     result = await db.execute(select(models.User).where(models.User.id == user_id))
+    return result.scalars().first()
+
+
+async def get_user_by_email(db: AsyncSession, user_email: str) -> models.User | None:
+    result = await db.execute(
+        select(models.User).where(models.User.email == user_email)
+    )
     return result.scalars().first()
 
 
@@ -41,9 +52,6 @@ async def get_all_user(db: AsyncSession) -> list[models.User]:
 async def create_post(
     db: AsyncSession, post: schemas.PostCreate, owner_id: int
 ) -> models.Post:
-    user = await get_user_by_id(db, owner_id)
-    if not user:
-        raise ValueError("User does not exist")
 
     new_post = models.Post(**post.model_dump(), owner_id=owner_id)
     db.add(new_post)
@@ -53,9 +61,13 @@ async def create_post(
 
 
 async def update_post(
-    db: AsyncSession, post_id: int, post_update: schemas.PostUpdate
+    db: AsyncSession, user_id: int, post_id: int, post_update: schemas.PostUpdate
 ) -> models.Post | None:
-    result = await db.execute(select(models.Post).where(models.Post.id == post_id))
+    result = await db.execute(
+        select(models.Post).where(
+            and_(models.Post.id == post_id, models.Post.owner_id == user_id)
+        )
+    )
     post = result.scalars().first()
     if not post:
         return None
