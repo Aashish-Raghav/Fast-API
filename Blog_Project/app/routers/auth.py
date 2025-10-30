@@ -6,7 +6,7 @@ import datetime
 from app.database import get_db
 from app.logger import logger
 from app.schemas import UserResponse, UserCreate, Token
-from app.crud import create_user, get_user_by_email
+from app.crud import create_user, get_user_by_username
 from app.auth.utils import verify_password
 from app.auth.jwt import create_access_token, create_refresh_token
 
@@ -29,7 +29,7 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
 ):
     # find user
-    user = await get_user_by_email(db, form_data.username)
+    user = await get_user_by_username(db, form_data.username)
 
     if not user:
         logger.warning(f"Login attempt with non existent user : {form_data.username}")

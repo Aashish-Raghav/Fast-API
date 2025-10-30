@@ -102,6 +102,7 @@ Posts
 - GET    /posts/{id}      — get post
 - GET    /posts/user/{id} — posts by user
 - PATCH  /posts/{id}      — update (owner only)
+- DELETE /posts/{id}      — update (owner only)
 ```
 
 Notes:

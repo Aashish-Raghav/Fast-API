@@ -27,7 +27,14 @@ class PostUpdate(BaseModel):
 
 # Schemas for user
 class UserBase(BaseModel):
-    username: str = Field(..., min_length=1, max_length=50)
+    full_name: str = Field(..., min_length=3, max_length=100)
+    username: str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        pattern=r"^[a-zA-z0-9Z]+$",
+        description="Username must contain only letters, numbers, and underscores.",
+    )
     email: EmailStr
 
 

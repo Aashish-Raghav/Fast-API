@@ -20,9 +20,12 @@ async def create_user(db: AsyncSession, user: schemas.UserCreate) -> models.User
 
     hashed_password = await get_password_hash(user.password)
     new_user = models.User(
-        username=user.username, email=user.email, hashed_password=hashed_password
+        full_name=user.full_name,
+        username=user.username,
+        email=user.email,
+        hashed_password=hashed_password,
     )
-
+    logger.info(f"Regisration successful for user : {user}")
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
@@ -37,6 +40,13 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> models.User | None:
 async def get_user_by_email(db: AsyncSession, user_email: str) -> models.User | None:
     result = await db.execute(
         select(models.User).where(models.User.email == user_email)
+    )
+    return result.scalars().first()
+
+
+async def get_user_by_username(db: AsyncSession, username: str) -> models.User | None:
+    result = await db.execute(
+        select(models.User).where(models.User.username == username)
     )
     return result.scalars().first()
 
@@ -57,21 +67,29 @@ async def create_post(
     db.add(new_post)
     await db.commit()
     await db.refresh(new_post)
+    logger.info(f"New post by user {owner_id}, post_id : {new_post.id}")
     return new_post
 
 
-async def update_post(
-    db: AsyncSession, user_id: int, post_id: int, post_update: schemas.PostUpdate
+async def validate_user_post(
+    db: AsyncSession, user_id: int, post_id: int
 ) -> models.Post | None:
     result = await db.execute(
         select(models.Post).where(
             and_(models.Post.id == post_id, models.Post.owner_id == user_id)
         )
     )
-    post = result.scalars().first()
+    return result.scalars().first()
+
+
+async def update_post(
+    db: AsyncSession, user_id: int, post_id: int, post_update: schemas.PostUpdate
+) -> models.Post | None:
+
+    post = await validate_user_post(db, user_id, post_id)
     if not post:
         return None
-
+    logger.info(f"Post : {post_id} validated for user : {user_id}")
     update_data = post_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(post, key, value)
@@ -79,7 +97,24 @@ async def update_post(
     db.add(post)
     await db.commit()
     await db.refresh(post)
+    logger.info(f"Successfully updated post : {post_id}")
     return post
+
+
+async def delete_post(
+    db: AsyncSession, user_id: int, post_id: int
+) -> models.Post | None:
+
+    post = await validate_user_post(db, user_id, post_id)
+    if not post:
+        return False  # post not found or not owned by this user
+
+    logger.info(f"Post : {post_id} validated for user : {user_id}")
+    # Delete post
+    await db.delete(post)
+    await db.commit()
+    logger.info(f"Successfully Deleted post : {post_id}")
+    return True
 
 
 async def get_post_by_id(db: AsyncSession, post_id: int) -> models.Post | None:

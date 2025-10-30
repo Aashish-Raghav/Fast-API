@@ -8,7 +8,9 @@ from app.crud import (
     get_post_by_id,
     get_post_by_user,
     update_post,
+    delete_post,
 )
+from app.logger import logger
 from app.models import User
 from app.auth.dependencies import get_current_user
 
@@ -59,3 +61,20 @@ async def patch_post(
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
+
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post_route(
+    post_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    logger.debug(f"user: {type(current_user)}, post_id : {type(post_id)}")
+    logger.debug(f"User {current_user} attempting to delete post {post_id}")
+    deleted = await delete_post(db, current_user.id, post_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found or not authorized to delete.",
+        )
+    return {"detail": "Post deleted successfully."}
