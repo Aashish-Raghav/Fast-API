@@ -27,7 +27,7 @@ class PostUpdate(BaseModel):
 
 # Schemas for user
 class UserBase(BaseModel):
-    full_name: str = Field(..., min_length=3, max_length=100)
+    fullname: str = Field(..., min_length=3, max_length=100)
     username: str = Field(
         ...,
         min_length=1,

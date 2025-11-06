@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, or_
 
 from app.logger import logger
 from app.auth.utils import get_password_hash
@@ -11,16 +11,27 @@ from app import schemas
 
 async def create_user(db: AsyncSession, user: schemas.UserCreate) -> models.User:
     result = await db.execute(
-        select(models.User).where(models.User.email == user.email)
+        select(models.User).where(
+            or_(models.User.email == user.email, models.User.username == user.username)
+        )
     )
     existing_user = result.scalars().first()
+    print(f" Existing user : {existing_user}, user : {user}")
     if existing_user:
-        logger.warning(f"Registration attempt for existing user : {existing_user}")
-        raise ValueError("User Already Exists")
+        if existing_user.email == user.email:
+            logger.warning(
+                f"Registration attempt for existing email : {existing_user.email}"
+            )
+            raise ValueError("Email already registered")
+        if existing_user.username == user.username:
+            logger.warning(
+                f"Registration attempt for existing username : {existing_user.username}"
+            )
+            raise ValueError("Email already registered")
 
     hashed_password = await get_password_hash(user.password)
     new_user = models.User(
-        full_name=user.full_name,
+        fullname=user.fullname,
         username=user.username,
         email=user.email,
         hashed_password=hashed_password,
