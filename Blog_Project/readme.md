@@ -145,6 +145,25 @@ What is tested now
   - Registration success and duplicate registration handling
   - Validation (invalid email, short password)
   - Login success, wrong password, non-existent user, and missing credentials
+
+- Post endpoints (tests/test_posts.py) 
+  - Creating a post (requires auth) and response shape (id, created_at).
+  - Validation failures (e.g., empty title → 422).
+  - Public list and detail endpoints.
+  - Updating own post (success) and updating another user's post (should fail).
+  - Not-found scenarios return 404 or 400 as appropriate.
+
+- User endpoints (tests/test_users.py)  
+  - /users/me returns current user when authorized.
+  - Unauthorized and invalid token cases return 401.
+  - Listing users (protected) returns expected users created by fixtures.
+  - Retrieving a user by id and not-found behavior.
+
+- End-to-end workflow tests (tests/test_integration.py) 
+  - Full workflow: register → login → create post → read post → update post → list user posts.
+  - Unauthorized access scenarios: attempts to use protected endpoints without a valid token.
+  - Verifies that public endpoints remain accessible while protected routes enforce auth.
+
 - Test fixtures provide reusable setup:
   - db_session: creates and tears down an in-memory DB per test
   - client: httpx AsyncClient bound to the FastAPI app with dependency override
